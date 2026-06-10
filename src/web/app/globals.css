@@ -45,6 +45,7 @@
   --radius: 0.75rem;
 }
 
+/* Light mode shadcn/ui variables and Aurora token overrides */
 .light {
   --background: 96% 0.005 270;
   --foreground: 15% 0.02 270;
@@ -54,10 +55,6 @@
   --muted-foreground: 45% 0.01 270;
   --border: 0% 0 0 / 0.1;
   --input: 0% 0 0 / 0.1;
-}
-
-/* Light mode Aurora token overrides */
-.light {
   --color-glass-bg: oklch(100% 0 0 / 0.55);
   --color-glass-border: oklch(0% 0 0 / 0.1);
   --color-surface: oklch(96% 0.005 270);

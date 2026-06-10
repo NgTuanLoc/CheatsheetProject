@@ -69,7 +69,7 @@ namespace CheatsheetApp.Api.Migrations
                     Slug = table.Column<string>(type: "character varying(240)", maxLength: 240, nullable: false),
                     ContentType = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
                     Content = table.Column<string>(type: "text", nullable: false),
-                    SearchVector = table.Column<NpgsqlTsVector>(type: "tsvector", nullable: false, computedColumnSql: "setweight(to_tsvector('english', coalesce(title, '')), 'A') || setweight(to_tsvector('english', coalesce(content, '')), 'B')", stored: true),
+                    SearchVector = table.Column<NpgsqlTsVector>(type: "tsvector", nullable: false, computedColumnSql: "setweight(to_tsvector('english', coalesce(\"Title\", '')), 'A') || setweight(to_tsvector('english', coalesce(\"Content\", '')), 'B')", stored: true),
                     CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },

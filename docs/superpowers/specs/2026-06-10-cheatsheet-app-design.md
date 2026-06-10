@@ -29,6 +29,8 @@ A personal cheatsheet manager: create, organize, search, and read cheatsheets wr
 
 .NET 10 Minimal API owns PostgreSQL via EF Core 10; Next.js 16 is the entire UI and calls the API server-side only (BFF pattern — the browser never talks to the API directly). Aspire orchestrates everything in dev and publishes docker-compose artifacts for deployment.
 
+The API uses **vertical slice architecture**: code is organized by feature, not by technical layer. Each slice owns its endpoint, request/response models, validator, and handler logic in one folder — no shared Services/Repositories layers. Slices talk to EF Core (`AppDbContext`) directly. Cross-cutting concerns (auth, error envelope, rate limiting, logging) live in `Common/` as endpoint filters and middleware; each slice self-registers via a small `IEndpoint` interface discovered at startup.
+
 ### Solution structure
 
 ```
@@ -37,6 +39,13 @@ CheatsheetProject/
 ├── src/
 │   ├── CheatsheetApp.AppHost/         # Aspire 13.x orchestrator (dev entry point)
 │   ├── CheatsheetApp.Api/             # .NET 10 Minimal API + EF Core 10 + Npgsql
+│   │   ├── Features/                  #   vertical slices
+│   │   │   ├── Auth/                  #     Login endpoint + validator + JWT issuing
+│   │   │   ├── Categories/            #     one file per endpoint (Get/Create/Update/Delete)
+│   │   │   ├── Cheatsheets/           #     CRUD, search, import, export slices
+│   │   │   └── Tags/
+│   │   ├── Common/                    #   error envelope, endpoint filters, slug helper
+│   │   └── Data/                      #   AppDbContext, entities, migrations, seeding
 │   ├── CheatsheetApp.ServiceDefaults/ # Aspire telemetry/health/resilience defaults
 │   └── web/                           # Next.js 16 App Router + Tailwind v4 + shadcn/ui
 ├── tests/
@@ -50,7 +59,7 @@ Frontend tests (Vitest, Playwright) live inside `src/web`.
 
 | Concern | Choice |
 |---|---|
-| Backend | .NET 10 LTS, Minimal APIs, EF Core 10 + Npgsql |
+| Backend | .NET 10 LTS, Minimal APIs (vertical slice architecture), EF Core 10 + Npgsql |
 | Orchestration | Aspire 13.x (dev dashboard; docker-compose publisher for deploy) |
 | Frontend | Next.js 16 (App Router, React 19), Tailwind CSS v4, shadcn/ui |
 | Markdown editor | Milkdown (Crepe) |

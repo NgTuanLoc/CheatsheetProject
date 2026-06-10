@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace CheatsheetApp.Api.Data;
 
@@ -12,6 +13,7 @@ public static class DbInitializer
 
         await db.Database.MigrateAsync();
 
+        // Check is intentionally non-atomic; app runs as a single instance.
         if (!await db.Users.AnyAsync())
         {
             var username = config["Admin:Username"]

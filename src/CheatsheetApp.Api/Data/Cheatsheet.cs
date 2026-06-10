@@ -6,7 +6,7 @@ public static class ContentTypes
 {
     public const string Markdown = "markdown";
     public const string Html = "html";
-    public static readonly string[] All = [Markdown, Html];
+    public static readonly IReadOnlyList<string> All = [Markdown, Html];
 }
 
 public sealed class Cheatsheet

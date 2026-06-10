@@ -29,5 +29,8 @@ public static class DbInitializer
             });
             await db.SaveChangesAsync();
         }
+
+        if (config.GetValue("Database:SeedSampleData", false))
+            await SeedData.ApplyAsync(db);
     }
 }

@@ -44,6 +44,8 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
       const res = await fetch(`/api/search${qs}`);
       const body = await res.json();
       setResults(body.data ?? []);
+    } catch {
+      setResults([]);
     } finally {
       setLoading(false);
     }

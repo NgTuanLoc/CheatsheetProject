@@ -49,6 +49,7 @@ public class ImportExportTests(ApiFixture fixture)
         var response = await client.PostAsync("/cheatsheets/import",
             BuildUpload("styled.html", "<html><style>h1{color:red}</style><h1>Hi</h1></html>", categoryId));
 
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         var sheet = (await response.Content.ReadFromJsonAsync<ApiResponse<SheetPayload>>())!.Data!;
         Assert.Equal("html", sheet.ContentType);
         Assert.Contains("<style>", sheet.Content);
@@ -82,5 +83,21 @@ public class ImportExportTests(ApiFixture fixture)
         Assert.Equal("text/markdown", response.Content.Headers.ContentType!.MediaType);
         Assert.Equal("## export me", await response.Content.ReadAsStringAsync());
         Assert.Contains("exportable.md", response.Content.Headers.ContentDisposition!.FileName);
+    }
+
+    [Fact]
+    public async Task Export_downloads_html_with_correct_content_type()
+    {
+        var (client, categoryId) = await SetupAsync("ImportCat E");
+        var create = await client.PostAsJsonAsync("/cheatsheets", new
+        { title = "Html Sheet", categoryId, contentType = "html", content = "<h1>Hello</h1>", tags = Array.Empty<string>() });
+        Assert.Equal(HttpStatusCode.Created, create.StatusCode);
+        var id = (await create.Content.ReadFromJsonAsync<ApiResponse<SheetPayload>>())!.Data!.Id;
+
+        var response = await client.GetAsync($"/cheatsheets/{id}/export");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("text/html", response.Content.Headers.ContentType!.MediaType);
+        Assert.Contains("html-sheet.html", response.Content.Headers.ContentDisposition!.FileName);
     }
 }

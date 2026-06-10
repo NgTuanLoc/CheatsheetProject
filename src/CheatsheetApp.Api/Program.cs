@@ -19,6 +19,9 @@ builder.Host.UseSerilog((context, config) => config
 builder.AddServiceDefaults();
 builder.AddNpgsqlDbContext<AppDbContext>("cheatsheets");
 
+// Enable Npgsql OpenTelemetry instrumentation (diagnostic source for tracing database queries).
+AppContext.SetSwitch("Npgsql.EnableDiagnosticSource", true);
+
 // Fail fast if secrets are missing (validated at startup, not first use).
 var jwtKey = builder.Configuration["Jwt:Key"]
     ?? throw new InvalidOperationException("Jwt:Key is not configured.");

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import type { Category, CheatsheetSummary } from '@/lib/types';
 import { Sidebar } from './Sidebar';
 import { AppHeader } from './AppHeader';
+import { CommandPalette } from '@/components/search/CommandPalette';
 
 interface AppLayoutProps {
   categories: Category[];
@@ -32,8 +33,7 @@ export function AppLayout({ categories, sheets, children }: AppLayoutProps) {
         </main>
       </div>
 
-      {/* CommandPalette will be added in Task 10 */}
-      {/* paletteOpen state wired to CommandPalette in Task 10: {paletteOpen.toString()} */}
+      <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
     </div>
   );
 }

@@ -109,6 +109,10 @@ Input validation with FluentValidation at the boundary. Uploads are checked for 
 
 ## Frontend
 
+### Responsive layout
+
+The UI must be fully responsive. Desktop shows the persistent sidebar; below the `lg` breakpoint the sidebar collapses into a slide-over drawer behind a hamburger button, the command palette remains available via a header search button, and reading/editor views go single-column full-width. Code blocks scroll horizontally rather than breaking layout on small screens. Touch targets follow comfortable minimum sizes.
+
 ### Layout (docs-style sidebar)
 
 - Persistent left sidebar: collapsible category groups listing their sheets, active sheet highlighted, "+ New", import button, theme/dark-mode toggle.

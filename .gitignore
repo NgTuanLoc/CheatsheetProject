@@ -1,0 +1,21 @@
+# Superpowers brainstorm sessions
+.superpowers/
+
+# .NET
+bin/
+obj/
+*.user
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+
+# IDE
+.vs/
+.idea/

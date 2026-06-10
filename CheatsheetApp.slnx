@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/CheatsheetApp.Api/CheatsheetApp.Api.csproj" />
+    <Project Path="src/CheatsheetApp.AppHost/CheatsheetApp.AppHost.csproj" />
+    <Project Path="src/CheatsheetApp.ServiceDefaults/CheatsheetApp.ServiceDefaults.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/CheatsheetApp.Api.Tests/CheatsheetApp.Api.Tests.csproj" />
+  </Folder>
+</Solution>

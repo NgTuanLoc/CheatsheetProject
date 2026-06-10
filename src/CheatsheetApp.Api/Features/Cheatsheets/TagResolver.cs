@@ -19,11 +19,12 @@ public static class TagResolver
         var slugs = distinct.Select(SlugGenerator.Generate).ToList();
         var existing = await db.Tags.Where(t => slugs.Contains(t.Slug)).ToListAsync(ct);
 
+        var existingSlugs = existing.Select(t => t.Slug).ToHashSet();
         var result = new List<Tag>(existing);
         foreach (var name in distinct)
         {
             var slug = SlugGenerator.Generate(name);
-            if (existing.All(t => t.Slug != slug))
+            if (!existingSlugs.Contains(slug))
             {
                 var tag = new Tag { Name = name, Slug = slug };
                 db.Tags.Add(tag);

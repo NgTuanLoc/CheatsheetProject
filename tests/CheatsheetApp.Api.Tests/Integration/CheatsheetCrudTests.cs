@@ -8,7 +8,7 @@ namespace CheatsheetApp.Api.Tests.Integration;
 public class CheatsheetCrudTests(ApiFixture fixture)
 {
     public sealed record SheetPayload(
-        int Id, string Title, string Slug, string CategorySlug, string ContentType,
+        int Id, string Title, string Slug, string CategorySlug, string CategoryName, string ContentType,
         string Content, string[] Tags, DateTimeOffset CreatedAt, DateTimeOffset UpdatedAt);
     private sealed record CategoryPayload(int Id, string Slug);
 
@@ -38,7 +38,8 @@ public class CheatsheetCrudTests(ApiFixture fixture)
         var sheet = (await create.Content.ReadFromJsonAsync<ApiResponse<SheetPayload>>())!.Data!;
         Assert.Equal("undo-last-commit", sheet.Slug);
         Assert.Equal(categorySlug, sheet.CategorySlug);
-        Assert.Equal(2, sheet.Tags.Length);
+        Assert.False(string.IsNullOrEmpty(sheet.CategoryName));
+        Assert.Equal(new[] { "git", "Recovery" }, sheet.Tags); // sorted ascending by name (culture-aware: lowercase before uppercase)
     }
 
     [Fact]

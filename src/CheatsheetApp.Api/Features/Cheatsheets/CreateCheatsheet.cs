@@ -46,7 +46,14 @@ public sealed class CreateCheatsheetEndpoint : IEndpoint
             Tags = await TagResolver.ResolveAsync(db, request.Tags, ct),
         };
         db.Cheatsheets.Add(sheet);
-        await db.SaveChangesAsync(ct);
+        try
+        {
+            await db.SaveChangesAsync(ct);
+        }
+        catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("23505") == true)
+        {
+            return Results.Conflict(ApiResponse<object>.Fail("A cheatsheet with this title already exists in this category."));
+        }
 
         return Results.Created($"/cheatsheets/{category.Slug}/{sheet.Slug}",
             ApiResponse<CheatsheetDetail>.Ok(CheatsheetDetail.From(sheet)));

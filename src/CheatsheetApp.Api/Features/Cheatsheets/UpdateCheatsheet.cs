@@ -33,7 +33,14 @@ public sealed class UpdateCheatsheetEndpoint : IEndpoint
         sheet.UpdatedAt = DateTimeOffset.UtcNow;
         sheet.Tags.Clear();
         sheet.Tags.AddRange(await TagResolver.ResolveAsync(db, request.Tags, ct));
-        await db.SaveChangesAsync(ct);
+        try
+        {
+            await db.SaveChangesAsync(ct);
+        }
+        catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("23505") == true)
+        {
+            return Results.Conflict(ApiResponse<object>.Fail("A cheatsheet with this title already exists in this category."));
+        }
 
         return Results.Ok(ApiResponse<CheatsheetDetail>.Ok(CheatsheetDetail.From(sheet)));
     }

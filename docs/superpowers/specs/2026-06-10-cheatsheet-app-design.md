@@ -73,7 +73,7 @@ Frontend tests (Vitest, Playwright) live inside `src/web`.
 Search: a generated `tsvector` column over `title + content` with a GIN index. Title matches rank above body matches; prefix matching supported ("dock" finds Docker).
 
 Rules:
-- Slugs are auto-generated from names/titles, unique within their scope; URLs look like `/sheets/git/undo-last-commit`.
+- Slugs are auto-generated from names/titles. Category slugs are globally unique; cheatsheet slugs are unique within their category. URLs look like `/sheets/git/undo-last-commit`.
 - Deleting a category that still contains cheatsheets is rejected (reassign first).
 - Deleting a cheatsheet is a hard delete behind a confirm dialog.
 
@@ -106,7 +106,7 @@ Input validation with FluentValidation at the boundary. Uploads are checked for 
 - `/login` — credentials form.
 - `/` — redirects to the most recently updated cheatsheet.
 - `/sheets/[category]/[slug]` — reading view: rendered content, tag chips, Edit / Export / Delete actions.
-- `/sheets/new`, `/sheets/[category]/[slug]/edit` — Milkdown editor with title field, category picker, tag input. Markdown sheets only.
+- `/sheets/new`, `/sheets/[category]/[slug]/edit` — Milkdown editor with title field, category picker, tag input. Markdown sheets only; for HTML sheets the edit page instead shows title/category/tags fields plus a "Replace file" upload that sends the new content through `PUT /cheatsheets/{id}`.
 - Search: command palette (Ctrl+K, shadcn/ui Command) querying the API's full-text search; Enter navigates to the sheet. No separate search page.
 
 ### Rendering

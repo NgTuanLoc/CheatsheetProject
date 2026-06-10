@@ -9,7 +9,9 @@ public static class EndpointExtensions
 
         var endpoints = typeof(Program).Assembly.GetTypes()
             .Where(t => t.IsAssignableTo(typeof(IEndpoint)) && t is { IsAbstract: false, IsInterface: false })
-            .Select(t => (IEndpoint)Activator.CreateInstance(t)!);
+            .Select(t => Activator.CreateInstance(t) as IEndpoint
+                ?? throw new InvalidOperationException(
+                    $"IEndpoint '{t.Name}' must have a public parameterless constructor."));
 
         foreach (var endpoint in endpoints)
             endpoint.Map(group);

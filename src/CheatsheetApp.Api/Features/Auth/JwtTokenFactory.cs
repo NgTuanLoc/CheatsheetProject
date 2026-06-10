@@ -7,6 +7,8 @@ namespace CheatsheetApp.Api.Features.Auth;
 
 public static class JwtTokenFactory
 {
+    private static readonly JwtSecurityTokenHandler TokenHandler = new();
+
     public const string Issuer = "cheatsheet-api";
     public const string Audience = "cheatsheet-app";
 
@@ -23,6 +25,6 @@ public static class JwtTokenFactory
             expires: DateTime.UtcNow.AddDays(7),
             signingCredentials: credentials);
 
-        return new JwtSecurityTokenHandler().WriteToken(token);
+        return TokenHandler.WriteToken(token);
     }
 }

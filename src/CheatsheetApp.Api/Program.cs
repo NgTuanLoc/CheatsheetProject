@@ -49,11 +49,12 @@ builder.Services.AddRateLimiter(options =>
 
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-app.UseExceptionHandler(_ => { });
+app.UseExceptionHandler();
 app.UseSerilogRequestLogging();
 app.UseRateLimiter();
 app.UseAuthentication();

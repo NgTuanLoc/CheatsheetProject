@@ -1,5 +1,4 @@
 using System.Text;
-using System.Threading.RateLimiting;
 using CheatsheetApp.Api.Common;
 using CheatsheetApp.Api.Data;
 using CheatsheetApp.Api.Features.Auth;
@@ -7,6 +6,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 using Scalar.AspNetCore;
 using Serilog;
 
@@ -50,7 +50,36 @@ builder.Services.AddRateLimiter(options =>
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options =>
+{
+    options.AddDocumentTransformer((document, context, ct) =>
+    {
+        document.Components ??= new OpenApiComponents();
+        document.Components.SecuritySchemes ??= new Dictionary<string, IOpenApiSecurityScheme>();
+        document.Components.SecuritySchemes["bearer"] = new OpenApiSecurityScheme
+        {
+            Type = SecuritySchemeType.Http,
+            Scheme = "bearer",
+            BearerFormat = "JWT"
+        };
+        // Global default: all operations require bearer auth unless overridden.
+        document.Security ??= [];
+        document.Security.Add(new OpenApiSecurityRequirement
+        {
+            [new OpenApiSecuritySchemeReference("bearer")] = []
+        });
+        return Task.CompletedTask;
+    });
+    options.AddOperationTransformer((operation, context, ct) =>
+    {
+        // Override global security to none for AllowAnonymous endpoints (login).
+        var isAnonymous = context.Description.ActionDescriptor.EndpointMetadata
+            .OfType<Microsoft.AspNetCore.Authorization.IAllowAnonymous>().Any();
+        if (isAnonymous)
+            operation.Security = [];
+        return Task.CompletedTask;
+    });
+});
 
 var app = builder.Build();
 
@@ -65,8 +94,13 @@ app.MapEndpoints();
 
 if (app.Environment.IsDevelopment())
 {
+    var adminUsername = app.Configuration["Admin:Username"] ?? "admin";
+    var devToken = JwtTokenFactory.Create(adminUsername, jwtKey);
+
     app.MapOpenApi();
-    app.MapScalarApiReference();
+    app.MapScalarApiReference(options =>
+        options.AddPreferredSecuritySchemes("bearer")
+            .AddHttpAuthentication("bearer", auth => { }));
 }
 
 await DbInitializer.InitializeAsync(app.Services);

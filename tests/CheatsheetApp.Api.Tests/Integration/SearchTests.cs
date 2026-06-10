@@ -38,16 +38,16 @@ public class SearchTests(ApiFixture fixture) : IAsyncLifetime
                 categoryId = list!.Data!.Single(c => c.Slug == "searchcat").Id;
             }
 
-            await _client.PostAsJsonAsync("/cheatsheets", new
+            (await _client.PostAsJsonAsync("/cheatsheets", new
             {
                 title = "Kubernetes Basics", categoryId, contentType = "markdown",
                 content = "pods and deployments", tags = new[] { "searchable" },
-            });
-            await _client.PostAsJsonAsync("/cheatsheets", new
+            })).EnsureSuccessStatusCode();
+            (await _client.PostAsJsonAsync("/cheatsheets", new
             {
                 title = "Service Mesh", categoryId, contentType = "markdown",
                 content = "istio runs on kubernetes clusters", tags = Array.Empty<string>(),
-            });
+            })).EnsureSuccessStatusCode();
 
             _seeded = true;
         }

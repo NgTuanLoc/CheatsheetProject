@@ -22,6 +22,7 @@ public sealed partial class ListCheatsheetsEndpoint : IEndpoint
             query = query.Where(c => c.Tags.Any(t => t.Slug == tag));
 
         var tsQuery = string.IsNullOrWhiteSpace(q) ? null : ToPrefixTsQuery(q);
+        // EF Core cannot reuse server-side expressions; ToTsQuery is called twice intentionally.
         query = string.IsNullOrEmpty(tsQuery)
             ? query.OrderByDescending(c => c.UpdatedAt)
             : query

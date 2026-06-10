@@ -13,8 +13,8 @@ public sealed class SaveCheatsheetRequestValidator : AbstractValidator<SaveCheat
         RuleFor(r => r.ContentType)
             .Must(t => ContentTypes.All.Contains(t))
             .WithMessage("ContentType must be 'markdown' or 'html'.");
-        RuleFor(r => r.Content).NotEmpty();
-        RuleFor(r => r.Tags).NotNull();
+        RuleFor(r => r.Content).NotEmpty().MaximumLength(500_000);
+        RuleFor(r => r.Tags).NotNull().Must(t => t.Length <= 20).WithMessage("No more than 20 tags per cheatsheet.");
         RuleForEach(r => r.Tags).MaximumLength(60);
     }
 }

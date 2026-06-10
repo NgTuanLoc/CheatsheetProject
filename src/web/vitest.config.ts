@@ -10,6 +10,13 @@ export default defineConfig({
     globals: true,
     coverage: {
       provider: 'v8',
+      include: [
+        'components/auth/**',
+        'components/layout/SidebarCategory.tsx',
+        'components/search/**',
+        'components/theme/**',
+        'components/editor/TagInput.tsx',
+      ],
       thresholds: { lines: 80, functions: 80, branches: 80 },
     },
   },
